@@ -1,2 +1,2 @@
-# ps-ping-logger
-Powershell Ping logger script
+# Powershell Ping logger
+Script created for network monitoring to log pings created.
