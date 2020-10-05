@@ -1,6 +1,7 @@
 $hostToPing = Read-Host -Prompt 'Welke locatie wil je loggen?'
 $logPathLocation = "$HOME\Desktop\ping-logger"
-$logPath = "$HOME\Desktop\ping-logger\log-$hostToPing.txt"
+$initialDate = Get-Date -Format "yyyyMMdd"
+$logPath = "$HOME\Desktop\ping-logger\log-$($initialDate)-$($hostToPing).txt"
 $alwaysTrue = 1
 
 if(!(Test-Path $logPathLocation)){
@@ -10,22 +11,39 @@ if(!(Test-Path $logPathLocation)){
 while($alwaysTrue -eq "1")
 {
 
-        # refresh the timestamp before each ping attempt
-        $theTime = Get-Date -format g
+    # Get actual date
+    $currentDate = Get-Date -Format "yyyyMMdd"
 
-        # refresh the ping variable
-        $result = ping $hostToPing -n 1
+    # Check previous date is the same as current date
+    if ($initialDate -lt $currentDate) {
 
-                if ($result -like '*reply*')
-                {
-                    Write-Output "$theTime - pass - connection to $hostToPing is up" | Out-File $logPath -append
-                }
-                else
-                {
-                    Write-Output "$theTime - fail - connection to $hostToPing is down" | Out-File $logPath -append
-                }
+        # Set the variables according to current date
+        Set-Variable initialDate -Value (Get-Date -Format "yyyyMMdd")
+        Set-Variable logPath -Value "$HOME\Desktop\ping-logger\log-$($currentDate)-$($hostToPing).txt"
+        
+        # Check if file exists, if not, create one
+        if (!(Test-Path $logPath)) {
+            New-Item -ItemType File "log-$($currentDate)-$($hostToPing).txt"
+        }
+    }
 
-        Start-Sleep 1
-        Write-Output "Pinging $hostToPing"
+    # refresh the timestamp before each ping attempt
+    $theTime = Get-Date -Format "dd-MM-yyyy hh:mm:ss"
+
+    # refresh the ping variable
+    $result = ping $hostToPing -n 1
+
+            if ($result -like '*reply*')
+            {
+                Write-Output "$theTime - pass - connection to $hostToPing is up" | Out-File $logPath -append
+                Write-Output "$theTime - pass - connection to $hostToPing is up"
+            }
+            else
+            {
+                Write-Output "$theTime - fail - connection to $hostToPing is down" | Out-File $logPath -append
+                Write-Output "$theTime - fail - connection to $hostToPing is down"
+            }
+
+    Start-Sleep 1
 
 }
