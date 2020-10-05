@@ -1,6 +1,6 @@
 $hostToPing = Read-Host -Prompt 'Welke locatie wil je loggen?'
 $logPathLocation = "$HOME\Desktop\ping-logger"
-$logPath = "$HOME\Desktop\ping-logger\pinglog-$hostToPing.txt"
+$logPath = "$HOME\Desktop\ping-logger\log-$hostToPing.txt"
 $alwaysTrue = 1
 
 if(!(Test-Path $logPathLocation)){
@@ -25,7 +25,7 @@ while($alwaysTrue -eq "1")
                     Write-Output "$theTime - fail - connection to $hostToPing is down" | Out-File $logPath -append
                 }
 
-        Sleep 1
-        echo "Pinging $hostToPing"
+        Start-Sleep 1
+        Write-Output "Pinging $hostToPing"
 
 }
